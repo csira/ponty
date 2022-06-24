@@ -6,6 +6,7 @@ __all__ = [
 ]
 
 
+import functools
 import json
 
 from jsonschema.validators import validator_for
@@ -19,11 +20,13 @@ def validator_for_schema(schema):
     return validator(schema)
 
 
+@functools.cache
 def validator_for_dataclass(cls):
     schema = dataclass_to_jsonschema(cls)
     return validator_for_schema(schema)
 
 
+@functools.cache
 def validator_from_file(filepath: str):
     with open(filepath) as f:
         schema = json.load(f)

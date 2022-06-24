@@ -29,7 +29,7 @@ class Lock:
     sentinels: locker, providing add/remove operations and existence checking
     maxwait_ms: patience, in millis. Raises <timeout_error> when n * pulse > maxwait
     pulse_ms: attempt to acquire the lock approx every <pulse> milliseconds
-    timeout_error: exception class raised when the lock times out
+    timeout_error: exception class raised when <maxwait_ms> exceeded
 
     """
     sentinels: SentinelStore

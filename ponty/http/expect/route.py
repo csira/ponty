@@ -31,6 +31,7 @@ class RouteParameter(typing.Generic[T]):
         obj: typing.Optional[Request],
         objtype: type[Request] = None,
     ) -> typing.Union[T, str]:
+
         if obj is None:
             return f"{{{self._key}:{self._pattern}}}"
 
