@@ -17,7 +17,7 @@ class RouteParameter(typing.Generic[T]):
         self._pattern = pattern
         self._cast_func = cast_to
 
-    def __set_name__(self, obj, name):
+    def __set_name__(self, owner: type[Request], name: str):
         self._key = name
 
     @typing.overload
