@@ -3,8 +3,6 @@ import functools
 import random
 import time
 
-import aiohttp.web
-
 
 def now_millis() -> int:
     return int(time.time() * 1000)

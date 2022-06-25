@@ -4,7 +4,7 @@ import typing
 from typing import Awaitable, Callable, TypeVar
 from typing_extensions import ParamSpec
 
-import aiohttp
+import aiohttp.web
 
 
 class PontyError(Exception):
