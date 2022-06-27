@@ -2,7 +2,7 @@ import json
 import typing
 
 import aiohttp.web
-import jsonschema
+import jsonschema  # type: ignore
 
 from ponty.http.schema import (
     dataclass_to_jsonschema,

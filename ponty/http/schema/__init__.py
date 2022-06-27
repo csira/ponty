@@ -9,7 +9,7 @@ __all__ = [
 import functools
 import json
 
-from jsonschema.validators import validator_for
+from jsonschema.validators import validator_for  # type: ignore
 
 from ponty.http.schema.build import dataclass_to_jsonschema
 
