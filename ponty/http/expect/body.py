@@ -48,9 +48,13 @@ D = typing.TypeVar("D", bound=DataclassProtocol)
 
 class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
 
-    def __init__(self, cls: type[D]):
+    def __init__(self, cls: type[D], filepath: str = None):
         self._cls = cls
-        super().__init__(schema=dataclass_to_jsonschema(cls))
+
+        if filepath:
+            super().__init__(filepath=filepath)
+        else:
+            super().__init__(schema=dataclass_to_jsonschema(cls))
 
     def __get__(self, obj: Request, objtype: type[Request]) -> D:
         body = super().__get__(obj, objtype)
