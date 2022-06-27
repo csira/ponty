@@ -12,17 +12,22 @@ from ponty.registry import Registry
 class Stampede(Locked): ...
 
 
-cachemiss: typing.Final = object()
+class cachemiss: ...
 
 
-class CacheStore(abc.ABC):
+
+
+T = typing.TypeVar("T")
+
+
+class CacheStore(abc.ABC, typing.Generic[T]):
 
     @abc.abstractmethod
-    async def get(self, key: str) -> typing.Any:
+    async def get(self, key: str) -> typing.Union[T, type[cachemiss]]:
         """Return the cached value or the `cachemiss` sentinel. Errors are not captured."""
 
     @abc.abstractmethod
-    async def set(self, key: str, data: typing.Any) -> None: ...
+    async def set(self, key: str, data: T) -> None: ...
 
     @abc.abstractmethod
     async def remove(self, key: str) -> bool: ...
