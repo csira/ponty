@@ -1,14 +1,22 @@
+import typing
+
 import aiohttp.web
 
 
 _route_table = aiohttp.web.RouteTableDef()
 
 
+route = _route_table.route
 get = _route_table.get
-post = _route_table.post
 put = _route_table.put
+post = _route_table.post
 delete = _route_table.delete
 patch = _route_table.patch
+
+
+def route_iter() -> typing.Iterator[tuple[str, str]]:
+    for route in _route_table:
+        yield route.method, route.path
 
 
 def mount_routes(

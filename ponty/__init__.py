@@ -1,6 +1,6 @@
 __all__ = [
     "startmeup", "Provider",
-    "get", "post", "put", "delete", "patch",
+    "get", "post", "put", "delete", "patch", "route", "route_iter",
     "expect", "Request",
     "RouteParameter", "PositiveIntRouteParameter", "StringRouteParameter",
     "TextBody", "JsonBody", "ValidatedJsonBody", "ParsedJsonBody",
@@ -24,7 +24,7 @@ from ponty.errors import (
 
 from ponty.http import (
     startmeup, Provider,
-    get, post, put, delete, patch,
+    get, post, put, delete, patch, route, route_iter,
     expect, Request,
     RouteParameter, PositiveIntRouteParameter, StringRouteParameter,
     TextBody, JsonBody, ValidatedJsonBody, ParsedJsonBody,

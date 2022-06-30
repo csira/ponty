@@ -1,6 +1,6 @@
 __all__ = [
     "startmeup", "Provider",
-    "get", "post", "put", "delete", "patch",
+    "get", "post", "put", "delete", "patch", "route", "route_iter",
     "expect",
     "JsonBody", "TextBody", "ValidatedJsonBody", "ParsedJsonBody",
     "Header", "ContentLength", "ContentType",
@@ -27,4 +27,4 @@ from ponty.http.expect import (
 )
 from ponty.http.go import startmeup, Provider
 from ponty.http.render import render
-from ponty.http.routes import get, post, put, delete, patch
+from ponty.http.routes import get, post, put, delete, patch, route, route_iter
