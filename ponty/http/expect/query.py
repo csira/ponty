@@ -1,3 +1,5 @@
+import typing
+
 import aiohttp.web
 
 from ponty.http.expect.default_mixin import DefaultMixin
@@ -28,7 +30,7 @@ class QueryParameter(DefaultMixin):
 
 class QueryParameterEnum(QueryParameter):
 
-    def __init__(self, *, values: tuple[str, ...], **kw):
+    def __init__(self, *, values: typing.Iterable[str], **kw):
         super().__init__(**kw)
         self._values = values
 
