@@ -15,7 +15,7 @@ patch = _route_table.patch
 
 
 def route_iter() -> typing.Iterator[tuple[str, str]]:
-    for route in _route_table:
+    for route in ( typing.cast(aiohttp.web.RouteDef, r) for r in _route_table ):
         yield route.method, route.path
 
 
