@@ -1,17 +1,20 @@
-from ponty.http.expect.default_mixin import DefaultMixin
+import aiohttp.web
 
 
-class Header(DefaultMixin):
+class Header:
 
     def __init__(self, *, key: str, required: bool = False, default: str = ""):
         self._key = key
-        super().__init__(required=required, default=default)
+        self._required = required
+        self._default = default
 
     def __get__(self, obj, objtype=None) -> str:
         try:
             return obj.req.headers[self._key]
         except KeyError:
-            return self.get_default()
+            if self._required:
+                raise aiohttp.web.HTTPBadRequest
+            return self._default
 
 
 class ContentLength(Header):

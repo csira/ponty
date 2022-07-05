@@ -2,10 +2,8 @@ import typing
 
 import aiohttp.web
 
-from ponty.http.expect.default_mixin import DefaultMixin
 
-
-class QueryParameter(DefaultMixin):
+class QueryParameter:
 
     def __init__(
         self,
@@ -15,7 +13,8 @@ class QueryParameter(DefaultMixin):
         default: str = "",
     ):
         self._key = key
-        super().__init__(required=required, default=default)
+        self._required = required
+        self._default = default
 
     def __set_name__(self, obj, name):
         if not self._key:
@@ -25,7 +24,9 @@ class QueryParameter(DefaultMixin):
         try:
             return obj.req.query[self._key]
         except KeyError:
-            return self.get_default()
+            if self._required:
+                raise aiohttp.web.HTTPBadRequest
+            return self._default
 
 
 class QueryParameterEnum(QueryParameter):
