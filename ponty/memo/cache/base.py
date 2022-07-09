@@ -4,6 +4,7 @@ import functools
 import hashlib
 import json
 import typing
+import warnings
 
 from ponty.memo.lock.base import Lock, Locked
 from ponty.registry import Registry
@@ -70,11 +71,11 @@ def cache(store: CacheStore, antistampede: Lock, name: str = ""):
 
 
 @asynccontextmanager
-async def invalidate(name: str, *a, **kw) -> typing.AsyncIterator[None]:
-    """Invalidate an item in cache <name>.
+async def invalidate(cachename: str, *a, **kw) -> typing.AsyncIterator[None]:
+    """Invalidate an item in cache <cachename>.
 
-    Also waits for and holds the cache's lock until the context manager exits.
-    This is to prevent simultaneous fetches from re-cache-ing the item before
+    Waits for and holds the cache's lock until the context manager exits.
+    This prevents simultaneous fetches from re-cache-ing the item before
     mutations are committed.
 
     Note the *arg/**kwarg combo must match the arguments to the cache-decorated
@@ -85,18 +86,23 @@ async def invalidate(name: str, *a, **kw) -> typing.AsyncIterator[None]:
         ...
 
     async def update_foo(foo_id, ...):
-        async with invalidate("foo", foo_id):  # this works
+        async with invalidate("foo", foo_id):  # this hits
             ...
         async with invalidate("foo", foo_id=foo_id):  # this does not
             ...
 
     """
-    store, antistampede = _registry.get(name)
     key = _hash_args(*a, **kw)
 
-    async with antistampede.lock(key):
-        await store.remove(key)
+    try:
+        store, antistampede = _registry.get(cachename)
+    except KeyError:
+        warnings.warn(f"'{cachename}' is not registered", category=RuntimeWarning)
         yield
+    else:
+        async with antistampede.lock(key):
+            await store.remove(key)
+            yield
 
 
 def _hash_args(*a, **kw) -> str:
