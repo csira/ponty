@@ -9,14 +9,37 @@ import aiohttp.web
 
 class PontyError(Exception):
 
-    def __init__(self, msg=None, *a, **kw):
-        self.msg = msg
-        super().__init__(*a, **kw)
+    status_code = 500
+
+    def __init__(
+        self,
+        *,
+        text: str = None,
+        body: typing.Any = None,
+        **kw
+    ):
+        if text is not None and body is not None:
+            raise ValueError
+
+        super().__init__()
+        self.text = text
+        self.body = body
+        self.kw = kw
 
 
-class DoesNotExist(PontyError): ...
-class ValidationError(PontyError): ...
-class Locked(PontyError): ...
+class DoesNotExist(PontyError):
+
+    status_code = 404
+
+
+class ValidationError(PontyError):
+
+    status_code = 400
+
+
+class Locked(PontyError):
+
+    status_code = 409
 
 
 
@@ -30,12 +53,13 @@ def error_trap(f: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
     async def wrapper(*a: P.args, **kw: P.kwargs) -> R:
         try:
             return await f(*a, **kw)
-        except DoesNotExist as e:
-            raise aiohttp.web.HTTPNotFound(text=e.msg)
-        except ValidationError as e:
-            raise aiohttp.web.HTTPBadRequest(text=e.msg)
-        except Locked as e:
-            raise aiohttp.web.HTTPConflict(text=e.msg)
+        except PontyError as e:
+            raise_for_status(
+                e.status_code,
+                text=e.text,
+                body=e.body,
+                **e.kw
+            )
     return wrapper
 
 
@@ -43,13 +67,13 @@ def raise_for_status(
     status: int,
     *,
     text: str = None,
-    body = None,
+    body: typing.Any = None,
     content_type: str = None,
     **kw
 ) -> typing.NoReturn:
 
     if text is not None and body is not None:
-        raise TypeError
+        raise ValueError
 
     if body:
         text = json.dumps(body)
