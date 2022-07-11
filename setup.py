@@ -4,6 +4,7 @@ from setuptools import find_packages, setup
 if __name__ == "__main__":
     setup(
         packages=find_packages(include=["ponty", "ponty/*"]),
+        package_data={"ponty": ["py.typed"]},
         name="ponty",
         version="0.1.0",
         author_email="cbsira@gmail.com",
