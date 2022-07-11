@@ -3,10 +3,10 @@ from setuptools import find_packages, setup
 
 if __name__ == "__main__":
     setup(
-        packages=find_packages(include=["ponty", "ponty/*"]),
+        packages=find_packages(),
         package_data={"ponty": ["py.typed"]},
         name="ponty",
-        version="0.2.0",
+        version="0.2.1",
         license="BSD",
         url="https://github.com/csira/ponty",
         description="Minimal async web framework, built on aiohttp.",
