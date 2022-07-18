@@ -1,4 +1,3 @@
-import asyncio
 from collections import deque
 import typing
 import warnings
@@ -26,7 +25,6 @@ class _LRUStore(CacheStore[T]):
             warnings.warn("Cache without maxsize may grow endlessly, beware.")
         self._maxsize: typing.Final[int] = maxsize
 
-        self._lock = asyncio.Lock()
         self._cache: dict[str, tuple[int, T]] = dict()
         self._lru: deque[str] = deque()
 
@@ -40,9 +38,8 @@ class _LRUStore(CacheStore[T]):
             return cachemiss
 
         # rotate key to the end of the LRU queue
-        async with self._lock:
-            self._lru.remove(key)
-            self._lru.append(key)
+        self._lru.remove(key)
+        self._lru.append(key)
 
         return data
 
@@ -53,13 +50,12 @@ class _LRUStore(CacheStore[T]):
         await self._sizecheck()
 
     async def remove(self, key: str) -> bool:
-        async with self._lock:
-            try:
-                self._cache.pop(key)
-            except KeyError:
-                return False
-            else:
-                self._lru.remove(key)
+        try:
+            self._cache.pop(key)
+        except KeyError:
+            return False
+        else:
+            self._lru.remove(key)
         return True
 
     async def _is_expired(self, key: str, expiry: int) -> bool:
@@ -73,10 +69,9 @@ class _LRUStore(CacheStore[T]):
         if not self._maxsize:
             return
 
-        async with self._lock:
-            while len(self._lru) > self._maxsize:
-                key = self._lru.popleft()
-                self._cache.pop(key)
+        while len(self._lru) > self._maxsize:
+            key = self._lru.popleft()
+            self._cache.pop(key)
 
 
 def localcache(
