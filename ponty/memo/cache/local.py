@@ -34,7 +34,8 @@ class _LRUStore(CacheStore[T]):
         except KeyError:
             return cachemiss
 
-        if await self._is_expired(key, expiry):
+        if expiry < now_millis():
+            await self.remove(key)
             return cachemiss
 
         # rotate key to the end of the LRU queue
@@ -56,13 +57,6 @@ class _LRUStore(CacheStore[T]):
             return False
         else:
             self._lru.remove(key)
-        return True
-
-    async def _is_expired(self, key: str, expiry: int) -> bool:
-        if expiry > now_millis():
-            return False
-
-        await self.remove(key)
         return True
 
     async def _sizecheck(self) -> None:
