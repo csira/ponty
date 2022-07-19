@@ -10,7 +10,7 @@ __all__ = [
     "render",
     "http_client_provider", "lease_http_client",
 
-    "raise_for_status", "error_trap",
+    "raise_status", "error_trap",
     "PontyError", "DoesNotExist", "ValidationError",
 
     "retry",
@@ -18,7 +18,7 @@ __all__ = [
 
 
 from ponty.errors import (
-    raise_for_status, error_trap,
+    raise_status, error_trap,
     PontyError, DoesNotExist, ValidationError,
 )
 

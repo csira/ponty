@@ -54,7 +54,7 @@ def error_trap(f: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         try:
             return await f(*a, **kw)
         except PontyError as e:
-            raise_for_status(
+            raise_status(
                 e.status_code,
                 text=e.text,
                 body=e.body,
@@ -63,7 +63,7 @@ def error_trap(f: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
     return wrapper
 
 
-def raise_for_status(
+def raise_status(
     status: int,
     *,
     text: str = None,
