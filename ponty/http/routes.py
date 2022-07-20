@@ -1,17 +1,39 @@
+import functools
 import typing
 
+from aiohttp.hdrs import (
+    METH_DELETE,
+    METH_GET,
+    METH_PATCH,
+    METH_POST,
+    METH_PUT,
+)
 import aiohttp.web
+
+from ponty.errors import error_trap
 
 
 _route_table = aiohttp.web.RouteTableDef()
 
 
-route = _route_table.route
-get = _route_table.get
-put = _route_table.put
-post = _route_table.post
-delete = _route_table.delete
-patch = _route_table.patch
+def route(method: str, path: str, **kw):
+    def wraps(f):
+        @_route_table.route(method, path, **kw)
+        @error_trap
+        @functools.wraps(f)
+        async def wrapper(*a, **kw):
+            return await f(*a, **kw)
+        return wrapper
+    return wraps
+
+
+delete = functools.partial(route, METH_DELETE)
+get = functools.partial(route, METH_GET)
+patch = functools.partial(route, METH_PATCH)
+post = functools.partial(route, METH_POST)
+put = functools.partial(route, METH_PUT)
+
+
 
 
 def route_iter() -> typing.Iterator[tuple[str, str]]:

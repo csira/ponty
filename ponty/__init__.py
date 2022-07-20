@@ -7,7 +7,7 @@ __all__ = [
     "QueryParameter", "QueryParameterEnum",
     "Header", "ContentLength", "ContentType",
     "Cookie", "AIOHttpReq",
-    "render",
+    "render_json",
     "http_client_provider", "lease_http_client",
 
     "raise_status", "error_trap",
@@ -31,7 +31,7 @@ from ponty.http import (
     Header, ContentLength, ContentType,
     QueryParameter, QueryParameterEnum,
     Cookie, AIOHttpReq,
-    render,
+    render_json,
     http_client_provider, lease_http_client,
 )
 

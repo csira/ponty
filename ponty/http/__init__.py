@@ -9,7 +9,7 @@ __all__ = [
     "RouteParameter", "PositiveIntRouteParameter", "StringRouteParameter",
     "AIOHttpReq",
     "Cookie",
-    "render",
+    "render_json",
     "http_client_provider", "lease_http_client",
 ]
 
@@ -26,5 +26,5 @@ from ponty.http.expect import (
     Cookie,
 )
 from ponty.http.go import startmeup, Provider
-from ponty.http.render import render
+from ponty.http.render import render_json
 from ponty.http.routes import get, post, put, delete, patch, route, route_iter
