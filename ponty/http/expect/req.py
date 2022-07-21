@@ -1,6 +1,7 @@
 import functools
 import inspect
 import typing
+import warnings
 
 import aiohttp.web
 
@@ -38,7 +39,6 @@ class _Base(type):
         for key, val in dct.items():
             if isinstance(val, _DataDescriptor):
                 fieldnames.append(key)
-
             if isinstance(val, JsonBody):
                 the_class._extract_json = True
             if isinstance(val, TextBody):
@@ -65,9 +65,6 @@ class Request(metaclass=_Base):
 
     async def _prepare(self) -> None:
         if self._extract_json:
-            mimetype = self.req.headers["content-type"]
-            if "application/json" not in mimetype:
-                raise aiohttp.web.HTTPUnsupportedMediaType
             self._json = await self.req.json()
 
         if self._extract_text:
@@ -76,7 +73,7 @@ class Request(metaclass=_Base):
 
 
 
-def expect(cls: type[Request]):
+def expect(cls: type[Request], *, mimetype: str = None):
     def wraps(f):
         sig = inspect.signature(f)
         argnames = sig.parameters.keys()
@@ -85,8 +82,16 @@ def expect(cls: type[Request]):
         if symdiff:
             raise TypeError(f"Parameter mismatch in '{f.__name__}': {', '.join(symdiff)}")
 
+        if cls._extract_json:
+            if mimetype is not None and mimetype != "application/json":
+                warnings.warn(f"handler '{f.__name__}' expects a json payload but mimetype '{mimetype}' is expected")
+
         @functools.wraps(f)
         async def wrapper(req: aiohttp.web.Request):
+            if mimetype:
+                if mimetype not in req.headers["content-type"]:
+                    raise aiohttp.web.HTTPUnsupportedMediaType
+
             inst = cls(req)
             await inst._prepare()
             return await f(**inst._fields)
