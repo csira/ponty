@@ -6,7 +6,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         package_data={"ponty": ["py.typed"]},
         name="ponty",
-        version="0.2.1",
+        version="0.3.0",
         license="BSD",
         url="https://github.com/csira/ponty",
         description="Minimal async web framework, built on aiohttp.",
