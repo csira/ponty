@@ -1,5 +1,6 @@
 __all__ = [
     "dataclass_to_jsonschema",
+    "Annotation",
     "validator_for_dataclass",
     "validator_for_schema",
     "validator_from_file",
@@ -11,7 +12,7 @@ import json
 
 from jsonschema.validators import validator_for  # type: ignore
 
-from ponty.http.schema.build import dataclass_to_jsonschema
+from ponty.http.schema.build import dataclass_to_jsonschema, Annotation
 
 
 def validator_for_schema(schema):
