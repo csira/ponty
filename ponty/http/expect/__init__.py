@@ -21,7 +21,7 @@ from ponty.http.expect.req import (
 )
 from ponty.http.expect.route import (
     RouteParameter,
-    PositiveIntRouteParameter,
+    PosIntRouteParameter,
     StringRouteParameter,
 )
 

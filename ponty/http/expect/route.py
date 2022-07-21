@@ -41,7 +41,7 @@ class RouteParameter(typing.Generic[T]):
         return val
 
 
-class PositiveIntRouteParameter(RouteParameter[int]):
+class PosIntRouteParameter(RouteParameter[int]):
 
     def __init__(self):
         super().__init__(pattern="\d+", cast_to=int)

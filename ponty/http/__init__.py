@@ -6,7 +6,7 @@ __all__ = [
     "Header", "ContentLength", "ContentType",
     "QueryParameter", "QueryParameterEnum",
     "Request",
-    "RouteParameter", "PositiveIntRouteParameter", "StringRouteParameter",
+    "RouteParameter", "PosIntRouteParameter", "StringRouteParameter",
     "AIOHttpReq",
     "Cookie",
     "render_json",
@@ -21,7 +21,7 @@ from ponty.http.expect import (
     Header, ContentLength, ContentType,
     QueryParameter, QueryParameterEnum,
     Request,
-    RouteParameter, PositiveIntRouteParameter, StringRouteParameter,
+    RouteParameter, PosIntRouteParameter, StringRouteParameter,
     AIOHttpReq,
     Cookie,
 )
