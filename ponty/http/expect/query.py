@@ -36,7 +36,7 @@ class QueryParameterEnum(QueryParameter):
         self._values = values
 
         if self._default and self._default not in values:
-            raise TypeError(f"default '{self._default}' does not validate")
+            raise ValueError(f"default '{self._default}' does not validate")
 
     def __get__(self, obj, objtype=None) -> str:
         val = super().__get__(obj, objtype)

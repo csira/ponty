@@ -25,7 +25,7 @@ class ValidatedJsonBody(JsonBody):
         super().__init__()
 
         if not logical_xor(filepath, schema):
-            raise TypeError
+            raise RuntimeError("only one of filepath, schema may be specified")
 
         if filepath:
             self._validator = validator_from_file(filepath)
