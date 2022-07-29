@@ -29,13 +29,14 @@ class Lock:
     sentinels: locker, providing add/remove operations and existence checking
     maxwait_ms: patience, in millis. Raises <timeout_error> when n * pulse > maxwait
     pulse_ms: attempt to acquire the lock approx every <pulse> milliseconds
-    timeout_error: exception class raised when <maxwait_ms> exceeded
+    timeout_error: exception class raised when <maxwait_ms> exceeded.
+                   If provided, must be a subclass of Locked.
 
     """
     sentinels: SentinelStore
     maxwait_ms: int = 0
     pulse_ms: int = 100
-    timeout_error: type[Exception] = Locked
+    timeout_error: type[Locked] = Locked
 
     @asynccontextmanager
     async def lock(self, key: str) -> typing.AsyncIterator[None]:
@@ -48,7 +49,7 @@ class Lock:
             is_locked = await self.sentinels.exists(key)
 
         if is_locked:
-            raise self.timeout_error(key)
+            raise self.timeout_error(text=key)
 
         try:
             await self.sentinels.add(key)
