@@ -15,8 +15,8 @@ class _LRUStore(CacheStore[T]):
     def __init__(self, ttl_ms: int, maxsize: int):
         super().__init__()
 
-        if ttl_ms <= 0:
-            raise ValueError("ttl must be positive")
+        if ttl_ms < 0:
+            raise ValueError("negative ttl is nonsense")
         self._ttl_ms: typing.Final[int] = ttl_ms
 
         if maxsize < 0:
@@ -25,7 +25,7 @@ class _LRUStore(CacheStore[T]):
             warnings.warn("Cache without maxsize may grow endlessly, beware.")
         self._maxsize: typing.Final[int] = maxsize
 
-        self._cache: dict[str, tuple[int, T]] = dict()
+        self._cache: dict[str, tuple[typing.Union[int, None], T]] = dict()
         self._lru: deque[str] = deque()
 
     async def get(self, key: str) -> typing.Union[T, type[cachemiss]]:
@@ -34,7 +34,7 @@ class _LRUStore(CacheStore[T]):
         except KeyError:
             return cachemiss
 
-        if expiry < now_millis():
+        if expiry is not None and expiry < now_millis():
             await self.remove(key)
             return cachemiss
 
@@ -45,7 +45,11 @@ class _LRUStore(CacheStore[T]):
         return data
 
     async def set(self, key: str, data: T) -> None:
-        expiry = now_millis() + self._ttl_ms
+        if self._ttl_ms == 0:
+            expiry = None
+        else:
+            expiry = now_millis() + self._ttl_ms
+
         self._cache[key] = (expiry, data)
         self._lru.append(key)
         await self._sizecheck()
@@ -70,10 +74,10 @@ class _LRUStore(CacheStore[T]):
 
 def localcache(
     *,
-    ttl_ms: int,
+    ttl_ms: int = 0,
     maxwait_ms: int = 1000,
     pulse_ms: int = 50,
-    maxsize: int = 20,
+    maxsize: int = 128,
     name: str = "",
 ):
     """Process-RAM LRU memoizer with antistampede.
@@ -81,7 +85,7 @@ def localcache(
     Good for small frequently-used datasets (high ttl) or volatile
     stampede-likely objects (low ttl).
 
-    ttl_ms: millis to expiry. Must be positive
+    ttl_ms: millis to expiry. Use 0 (the default) for no expiry
     maxwait_ms: millis to wait for a lock to resolve.
                 Throws "Stampede" error when (n * pulse) > maxwait
     pulse_ms: antistampede recheck frequency
