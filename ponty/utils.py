@@ -33,25 +33,61 @@ def retry(
 ):
     """Retry the wrapped function if the specified exception(s) are raised.
 
-    excs: Exception class(es) to trap
-    max_retries: retry up to <max_retries> times
-    t1_ms: initial interval between retries, in millis
-    t2_ms: max interval between retries, in millis
-    backoff_factor: rate reduction factor for exponential backoff t = b^c, where
-        t is the delay factor between calls
-        b == <backoff_factor> is the base
-        c is the number of failures observed so far
-        b > 1 will reduce the retry rate, b == 1 will give consistent retry
-        intervals, and b < 1 will accelerate retries (unusual choice).
-        Set <backoff_factor> = 2 for run-of-the-mill binary exponential backoff.
-    anticollision: a deterministic algorithm may be unsuitable when errors are
-        caused by collisions because each client will sleep for the same
-        amount of time, leading to subsequent collisions ad infinitum.
-        Pass <anticollision>=True to treat b^c as an upper bound on the
-        time delay; in this case we will sleep for k * <t1_ms>, where k is a
-        random integer on [ 0, floor(b^c) ).
-
     Supports sync & async functions.
+
+    :param excs: Exception class(es) to trap
+    :param max_retries: max number of retries to attempt
+    :param t1_ms: initial interval between retries, in millis
+    :param t2_ms: max interval between retries, in millis
+    :param backoff_factor:
+      rate reduction factor for exponential backoff :math:`t = b^c`, where
+        | t is the delay factor between calls
+        | b = backoff_factor is the base
+        | c is the number of failures observed so far
+
+      :math:`b > 1` will reduce the retry rate,
+      :math:`b = 1` will give consistent retry intervals, and
+      :math:`b < 1` will accelerate retries (unusual choice).
+      Set to 2 for run-of-the-mill binary exponential backoff.
+    :param anticollision: a deterministic algorithm may be unsuitable when
+      errors are caused by collisions because each client will sleep for the
+      same amount of time, leading to subsequent collisions ad infinitum.
+      Pass True to treat :math:`b^c` as an upper bound on the
+      time delay; in this case we will sleep for :math:`k * t1\_ms`, where k is
+      a random integer on :math:`[0, \\lfloor b^c  \\rfloor)`.
+
+
+    .. code-block:: python
+
+        import random
+        import time
+
+        from ponty import retry
+
+
+        @retry(KeyError, ValueError, max_retries=10, backoff_factor=2)
+        def getval():
+            i = random.choice(range(5))
+            print(f"i = {i}, now = {time.time()}")
+
+            if i == 0:
+                return 42
+            if i % 2:
+                raise KeyError
+            raise ValueError
+
+
+    .. code-block:: bash
+
+        >>> print(getval())
+        i = 3, now = 1660102025.223419
+        i = 3, now = 1660102025.328576
+        i = 4, now = 1660102025.533844
+        i = 1, now = 1660102025.939289
+        i = 1, now = 1660102026.744708
+        i = 2, now = 1660102028.347733
+        i = 0, now = 1660102031.549533
+        42
 
     """
     def backoff(n_failures: int) -> float:

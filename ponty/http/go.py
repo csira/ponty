@@ -15,7 +15,15 @@ def startmeup(
     providers: Sequence[Provider] = (),
     route_tables: Sequence[aiohttp.web.RouteTableDef] = (),
 ) -> None:
+    """The main entrypoint for your application. Kicks off the server event loop.
 
+    :param port: TCP/IP port for HTTP server. No default, must be provided
+    :param Sequence[Provider] providers: see :ref:`Providers`
+    :param route_tables: Optional sequence of
+      `aiohttp.web.RouteTableDef <https://docs.aiohttp.org/en/stable/web_reference.html#routetabledef>`_
+      instances
+
+    """
     app = aiohttp.web.Application()
 
     for p in providers:

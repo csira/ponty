@@ -11,7 +11,15 @@ import typing
 from ponty.types_ import DataclassProtocol
 
 
-class Annotation(dict[str, typing.Any]): ...
+class Annotation(dict[str, typing.Any]):
+    """
+    Enrich member variable annotations with context-specific metadata.
+    These annotations appear in the jsonschema as generic keywords;
+    in some cases they are used for additional validation
+    (e.g. `array.minItems`), while in others they simply help make the
+    schema self-documenting (e.g. `description`).
+
+    """
 
 
 
@@ -22,32 +30,126 @@ D = typing.TypeVar("D", bound=DataclassProtocol)
 def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
     """Generate the jsonschema for a dataclass. Supports backreferences.
 
-    Optionally, fields can be enriched by passing jsonschema keywords to Annotation.
+    Optionally, fields can be enriched by passing jsonschema keywords to
+    :class:`ponty.Annotation`.
 
     Additionally, the dataclass can be enriched with keywords by embedding
-    a JsonSchema class (using Annotation as well).
+    a JsonSchema class (using :class:`ponty.Annotation` as well).
 
     E.g.,
 
+    .. code-block:: python
 
-    @dataclasses.dataclass
-    class Model:
+        import dataclasses
+        import json
+        import typing
 
-        name: str
-        body_style: typing.Literal["coupe", "sedan", "hatchback", "convertible", "wagon", "suv"]
-        year: typing.Annotated[int, Annotation(minimum=1900, maximum=2050)]
-        msrp: typing.Annotated[int, Annotation(description="MSRP, dollars.")]
-        cylinders: int = 4
+        from ponty import Annotation, dataclass_to_jsonschema
 
 
-    @dataclasses.dataclass
-    class Make:
+        @dataclasses.dataclass
+        class Model:
 
-        name: typing.Annotated[str, Annotation(description="Brand name")]
-        models: list[Model]
+            name: str
+            body_style: typing.Literal["coupe", "sedan", "hatchback", "convertible", "wagon", "suv"]
+            year: typing.Annotated[int, Annotation(minimum=1886, maximum=2030)]
+            msrp: typing.Annotated[int, Annotation(description="MSRP, dollars.")]
+            cylinders: int = 4
 
-        class JsonSchema:
-            annotation = Annotation(description="Brand name", examples=["Toyota", "Honda"])
+
+        @dataclasses.dataclass
+        class Make:
+
+            name: typing.Annotated[str, Annotation(description="Brand name")]
+            models: list[Model]
+
+            class JsonSchema:
+                annotation = Annotation(description="Automotive brand", examples=["Toyota", "Honda"])
+
+
+        if __name__ == "__main__":
+            schema = dataclass_to_jsonschema(Make)
+            print(json.dumps(schema, indent=2))
+
+
+    .. code-block:: json
+        :caption: generated jsonschema
+
+        {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Brand name"
+            },
+            "models": {
+              "type": "array",
+              "items": {
+                "allOf": [
+                  {
+                    "$ref": "#/$defs/Model"
+                  }
+                ]
+              }
+            }
+          },
+          "title": "Make",
+          "type": "object",
+          "description": "Automotive brand",
+          "examples": [
+            "Toyota",
+            "Honda"
+          ],
+          "required": [
+            "name",
+            "models"
+          ],
+          "$defs": {
+            "Model": {
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "body_style": {
+                  "enum": [
+                    "coupe",
+                    "sedan",
+                    "hatchback",
+                    "convertible",
+                    "wagon",
+                    "suv"
+                  ]
+                },
+                "year": {
+                  "type": "integer",
+                  "minimum": 1886,
+                  "maximum": 2030
+                },
+                "msrp": {
+                  "type": "integer",
+                  "description": "MSRP, dollars."
+                },
+                "cylinders": {
+                  "type": "integer",
+                  "default": 4
+                }
+              },
+              "title": "Model",
+              "type": "object",
+              "required": [
+                "name",
+                "body_style",
+                "year",
+                "msrp"
+              ]
+            }
+          }
+        }
+
+
+    :param dataclass cls: dataclass definition
+    :raises ValueError: raised if `cls` is not a dataclass
+    :return: the JSON schema
 
     """
     if not dataclasses.is_dataclass(cls):

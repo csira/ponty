@@ -17,6 +17,19 @@ _route_table = aiohttp.web.RouteTableDef()
 
 
 def route(method: str, path: str, **kw):
+    """
+    Bind a (method, path) pair to its handler, and register with the master route table.
+
+    :class:`PontyError`'s are automatically trapped and handled here.
+
+    :param method: HTTP method, e.g. GET
+    :param path: Relative path to resource.
+      May contain braces {} for dynamic components,
+      or references to :class:`RouteParameter` instances in an f-string
+    :param kw: Additional arguments discussed
+      `here <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.UrlDispatcher.add_get>`__
+
+    """
     def wraps(f):
         @_route_table.route(method, path, **kw)
         @error_trap
@@ -37,6 +50,12 @@ put = functools.partial(route, METH_PUT)
 
 
 def route_iter() -> typing.Iterator[tuple[str, str]]:
+    """Iterator, over routes on the primary route table.
+
+    :return: (method, path) pairs
+    :rtype: Iterator[tuple[str, str]]
+
+    """
     for route in ( typing.cast(aiohttp.web.RouteDef, r) for r in _route_table ):
         yield route.method, route.path
 

@@ -7,12 +7,14 @@ import aiohttp.web
 
 
 class JsonBody:
+    """Descriptor. Contains the deserialized request body."""
 
     def __get__(self, obj: "Request", objtype: type["Request"]):
         return obj._json
 
 
 class TextBody:
+    """Descriptor. Contains the raw request body."""
 
     def __get__(self, obj: "Request", objtype: type["Request"]):
         return obj._text
@@ -24,7 +26,7 @@ T = typing.TypeVar("T", covariant=True)
 
 
 @typing.runtime_checkable
-class _DataDescriptor(typing.Protocol[T]):
+class _Descriptor(typing.Protocol[T]):
     def __get__(self, obj, objtype=None) -> T: ...
 
 
@@ -37,7 +39,7 @@ class _Base(type):
 
         fieldnames = []
         for key, val in dct.items():
-            if isinstance(val, _DataDescriptor):
+            if isinstance(val, _Descriptor):
                 fieldnames.append(key)
             if isinstance(val, JsonBody):
                 the_class._extract_json = True
@@ -49,7 +51,17 @@ class _Base(type):
 
 
 class Request(metaclass=_Base):
+    """
+    Base class for request pre-processing.
+    Instantiated by :func:`expect`.
 
+    :ref:`Descriptors` for extracting components of the request should be
+    stored as class variables on subclasses.
+
+    :param req: automatically supplied by :func:`expect`
+    :type req: `aiohttp.web.Request <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Request>`_
+
+    """
     _fieldnames: tuple[str, ...] = ()
     _extract_json: bool = False
     _extract_text: bool = False
@@ -74,6 +86,18 @@ class Request(metaclass=_Base):
 
 
 def expect(cls: type[Request], *, mimetype: str = None):
+    """
+    Preprocess HTTP request, according to the rules configured in the
+    :class:`Request` subclass.
+
+    :param type[Request] cls: subclass of :class:`Request`,
+      with rules for processing the HTTP request attached as descriptors
+
+    :param str mimetype: expected IANA media type.
+      If provided and the specified type does not match the content-type
+      header, throws a 415
+
+    """
     def wraps(f):
         sig = inspect.signature(f)
         argnames = sig.parameters.keys()

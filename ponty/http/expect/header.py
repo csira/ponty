@@ -2,7 +2,18 @@ import aiohttp.web
 
 
 class Header:
+    """
+    Descriptor. Extracts request header `key`.
 
+    :param str key: header name
+
+    :param bool required:
+      if True, throws a 400 if the request header is not provided
+
+    :param str default:
+      default value, if the header does not appear on the request
+
+    """
     def __init__(self, *, key: str, required: bool = False, default: str = ""):
         self._key = key
         self._required = required
@@ -18,12 +29,14 @@ class Header:
 
 
 class ContentLength(Header):
+    """Inherits :class:`Header`. Extracts the "content-length" header."""
 
     def __init__(self, **kw):
         super().__init__(key="content-length", **kw)
 
 
 class ContentType(Header):
+    """Inherits :class:`Header`. Extracts the "content-type" header."""
 
     def __init__(self, **kw):
         super().__init__(key="content-type", **kw)

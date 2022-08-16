@@ -27,15 +27,22 @@ from ponty.http.expect.route import (
 
 
 class AIOHttpReq:
+    """Descriptor. Forwards along the
+    `aiohttp.web.Request <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Request>`__.
 
-    def __get__(self, obj, objtype=None) -> aiohttp.web.Request:
+    """
+    def __get__(self, obj: Request, objtype: type[Request] = None) -> aiohttp.web.Request:
         return obj.req
 
 
 class Cookie:
+    """Descriptor. Extracts request cookie `name`.
 
+    :param str name: cookie name
+
+    """
     def __init__(self, *, name: str):
         self._name = name
 
-    def __get__(self, obj, objtype=None) -> str:
+    def __get__(self, obj: Request, objtype: type[Request] = None) -> str:
         return obj.req.cookies[self._name]
