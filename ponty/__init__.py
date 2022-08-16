@@ -9,7 +9,7 @@ __all__ = [
     "Cookie", "AIOHttpReq",
     "render_json",
     "http_client_provider", "lease_http_client",
-    "Annotation",
+    "Annotation", "dataclass_to_jsonschema",
 
     "raise_status", "error_trap",
     "PontyError", "DoesNotExist", "ValidationError",
@@ -34,7 +34,7 @@ from ponty.http import (
     Cookie, AIOHttpReq,
     render_json,
     http_client_provider, lease_http_client,
-    Annotation,
+    Annotation, dataclass_to_jsonschema,
 )
 
 from ponty.utils import retry

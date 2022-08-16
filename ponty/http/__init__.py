@@ -11,7 +11,7 @@ __all__ = [
     "Cookie",
     "render_json",
     "http_client_provider", "lease_http_client",
-    "Annotation",
+    "Annotation", "dataclass_to_jsonschema",
 ]
 
 
@@ -29,4 +29,4 @@ from ponty.http.expect import (
 from ponty.http.go import startmeup, Provider
 from ponty.http.render import render_json
 from ponty.http.routes import get, post, put, delete, patch, route, route_iter
-from ponty.http.schema import Annotation
+from ponty.http.schema import Annotation, dataclass_to_jsonschema
