@@ -17,7 +17,6 @@ release = '0.3.2'
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autodoc.typehints",
-    "sphinx_toolbox.collapse",
 ]
 
 templates_path = ['_templates']
