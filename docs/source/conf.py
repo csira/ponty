@@ -17,6 +17,7 @@ release = '0.3.2'
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.autodoc.typehints",
+    "sphinx_rtd_theme",
 ]
 
 templates_path = ['_templates']
@@ -29,5 +30,5 @@ autodoc_typehints = "description"
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'classic'
+html_theme = "sphinx_rtd_theme"
 html_static_path = ['_static']
