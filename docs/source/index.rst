@@ -14,6 +14,8 @@ but does not interfere with using advanced aiohttp features directly.
 
 Current version is |release|.
 
+*Work in progress, doc improvements ongoing.*
+
 .. _GitHub: https://github.com/csira/ponty
 
 
@@ -84,10 +86,12 @@ Source
 
 Ponty is hosted on GitHub_.
 
-Please feel free to file an issue on the 
-`bug tracker <https://github.com/csira/ponty/issues>`_ 
+Please feel free to open a
+`PR <https://github.com/csira/ponty/pulls>`__
+or file an issue on the
+`bug tracker <https://github.com/csira/ponty/issues>`__
 if you have found a bug, would like to improve the documentation,
-or have suggestions. 
+or have a suggestion.
 
 
 Contents

@@ -120,7 +120,8 @@ class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
     Inherits :class:`ValidatedJsonBody`.
 
     :param dataclass cls: dataclass, into which the request body is marshalled.
-      A custom jsonschema validator is automatically created
+      A custom jsonschema validator is automatically created by
+      :func:`ponty.dataclass_to_jsonschema`
 
     :param filepath: if provided, path to the jsonschema file
       (see :class:`ValidatedJsonBody`).

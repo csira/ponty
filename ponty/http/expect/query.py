@@ -17,6 +17,7 @@ class QueryParameter:
 
 
     .. code-block:: python
+        :emphasize-lines: 3
 
         class HelloReq(Request):
 
@@ -31,6 +32,7 @@ class QueryParameter:
 
 
     .. code-block:: bash
+        :emphasize-lines: 4
 
         $ curl localhost:8080/hello?punc=. | python -m json.tool
         {
@@ -44,6 +46,7 @@ class QueryParameter:
 
     .. code-block:: bash
         :caption: the default in action
+        :emphasize-lines: 4
 
         $ curl localhost:8080/hello | python -m json.tool
         {

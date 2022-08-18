@@ -2,7 +2,15 @@ Reference
 =========
 
 
+
+Application Start
+-----------------
+
 .. autofunction:: ponty.startmeup
+
+
+
+----------
 
 
 
@@ -15,6 +23,9 @@ It automatically manages a route table under the hood,
 so it's sufficient to simply wrap your handlers like so:
 
 .. code-block:: python
+
+    from ponty import get, render_json
+
 
     @get("/hello")
     @render_json
@@ -66,6 +77,10 @@ instances directly, or they may take advantage of utilities such as
 
 
 .. autofunction:: ponty.route_iter
+
+
+
+----------
 
 
 
@@ -127,17 +142,20 @@ For example,
 
 .. _Descriptors:
 
-Descriptors
-***********
+Request Fields
+**************
 
-Descriptors are stored as class variables on another class.
-Within the Ponty context, the containing class is :class:`ponty.Request`.
+So far we've looked at the overall request. Now let's look at the individual
+fields on that request.
 
-The following descriptors implement rules for extracting and processing 
-components of the HTTP request. 
-In conjunction with :func:`ponty.expect`, 
-request descriptors are parameterized directly into the decorated handler.
+Ponty uses Python *descriptors* for extracting and processing
+components of the HTTP request.
+In conjunction with the :func:`ponty.expect` decorator, 
+request fields are parameterized directly into the decorated handler.
 (Descriptor names are reused as parameter names.)
+
+For a more detailed understanding of descriptors, see the
+`Python docs <https://docs.python.org/3/howto/descriptor.html>`__.
 
 
 Route Parameters
@@ -185,6 +203,10 @@ Schema Validation
 
 
 
+----------
+
+
+
 Response
 --------
 
@@ -204,6 +226,9 @@ HTTP Errors
 
 
 
+----------
+
+
 
 .. _Providers:
 
@@ -211,7 +236,7 @@ Providers
 ---------
 
 Providers manage shared assets, and are Ponty's way of tapping into
-`aiohttp.web.Application.cleanup_ctx <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application.cleanup_ctx>`_
+`aiohttp.web.Application.cleanup_ctx <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application.cleanup_ctx>`__
 for startup/cleanup handling.
 
 Providers are asynchronous generators that take a single argument, an instance of
@@ -224,6 +249,10 @@ Providers must be passed to :py:func:`ponty.startmeup` for proper handling.
 
 .. autofunction:: ponty.http_client_provider
 .. autofunction:: ponty.lease_http_client
+
+
+
+----------
 
 
 
