@@ -3,6 +3,8 @@ Ponty: async HTTP server for Python
 
 
 Ponty is a simple wrapper on `aiohttp <https://github.com/aio-libs/aiohttp>`__.
+It is primarily oriented around building JSON APIs,
+but does not interfere with using advanced aiohttp features directly.
 
 .. image:: https://badge.fury.io/py/ponty.svg
    :target: https://pypi.org/project/ponty
@@ -37,7 +39,7 @@ Hello World
     from ponty import (
         expect,
         get, 
-        render, 
+        render_json,
         Request, 
         startmeup, 
         StringRouteParameter,
@@ -51,7 +53,7 @@ Hello World
 
     @get(f"/hello/{Req.name}")
     @expect(Req)
-    @render
+    @render_json
     async def handler(name: str):
         return {"greeting": f"hi {name}!"}
 

@@ -14,7 +14,7 @@ but does not interfere with using advanced aiohttp features directly.
 
 Current version is |release|.
 
-*Work in progress, doc improvements ongoing.*
+*Doc improvements ongoing.*
 
 .. _GitHub: https://github.com/csira/ponty
 
