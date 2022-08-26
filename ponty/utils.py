@@ -41,8 +41,9 @@ def retry(
     :param t2_ms: max interval between retries, in millis
     :param backoff_factor:
       rate reduction factor for exponential backoff :math:`t = b^c`, where
+
         | t is the delay factor between calls
-        | b = backoff_factor is the base
+        | b = `backoff_factor` is the base
         | c is the number of failures observed so far
 
       :math:`b > 1` will reduce the retry rate,
@@ -50,7 +51,7 @@ def retry(
       :math:`b < 1` will accelerate retries (unusual choice).
       Set to 2 for run-of-the-mill binary exponential backoff.
     :param anticollision: a deterministic algorithm may be unsuitable when
-      errors are caused by collisions because each client will sleep for the
+      errors are caused by collisions, because each client will sleep for the
       same amount of time, leading to subsequent collisions ad infinitum.
       Pass True to treat :math:`b^c` as an upper bound on the
       time delay; in this case we will sleep for :math:`k * t1\_ms`, where k is

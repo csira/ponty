@@ -85,12 +85,93 @@ def localcache(
     Good for small frequently-used datasets (high ttl) or volatile
     stampede-likely objects (low ttl).
 
-    ttl_ms: millis to expiry. Use 0 (the default) for no expiry
-    maxwait_ms: millis to wait for a lock to resolve.
-                Throws "Stampede" error when (n * pulse) > maxwait
-    pulse_ms: antistampede recheck frequency
-    maxsize: evict least recently used values once the cache reaches <maxsize> elements
-    name: providing a name registers the cache, so it can be used by 'invalidate'
+    :param ttl_ms: millis to expiry. Use 0 (the default) for no expiry
+    :param maxwait_ms: millis to wait for a lock to resolve.
+      Throws :class:`Stampede` error when :math:`(n * pulse\_ms) > maxwait\_ms`
+    :param pulse_ms: antistampede recheck frequency
+    :param maxsize: evict least recently used values once the cache reaches
+      `maxsize` elements
+    :param name: Optional. Providing a name registers the cache, so it can be
+      used by :func:`invalidate`
+
+
+    Here is an example that demonstrates stampede control.
+    With `maxwait_ms = 0`, this operates as a mandatory lock:
+
+    .. code-block:: python
+        :emphasize-lines: 13
+
+        import asyncio
+
+        from ponty import get, render_json
+        from ponty.memo import localcache
+
+
+        @get("/cachetest")
+        @render_json
+        async def _locktest(_):
+            return await _fetch()
+
+
+        @localcache(maxwait_ms=0)
+        async def _fetch():
+            await asyncio.sleep(1)  # some expensive operation
+            return {"key": "value"}
+
+
+    For five simultaneous requests,
+    the first acquires the lock and begins work
+    while the others are immediately declined:
+
+    .. code-block:: bash
+
+        $ for i in {1..5}; do curl localhost:8080/cachetest -v & done
+
+        < HTTP/1.1 409 Conflict
+        < Date: Tue, 23 Aug 2022 21:49:12 GMT
+
+        < HTTP/1.1 409 Conflict
+        < Date: Tue, 23 Aug 2022 21:49:12 GMT
+
+        < HTTP/1.1 409 Conflict
+        < Date: Tue, 23 Aug 2022 21:49:12 GMT
+
+        < HTTP/1.1 409 Conflict
+        < Date: Tue, 23 Aug 2022 21:49:12 GMT
+
+        < HTTP/1.1 200 OK
+        < Date: Tue, 23 Aug 2022 21:49:13 GMT
+        {"now": 1661291352844, "data": {"key": "value"}, "elapsed": 1006}
+
+
+    Now that the item is cached,
+    running this again gives five immediate cache hits:
+
+    .. code-block:: bash
+
+        $ for i in {1..5}; do curl localhost:8080/cachetest & done
+        {"now": 1661291746863, "data": {"key": "value"}, "elapsed": 0}
+        {"now": 1661291746863, "data": {"key": "value"}, "elapsed": 0}
+        {"now": 1661291746863, "data": {"key": "value"}, "elapsed": 0}
+        {"now": 1661291746863, "data": {"key": "value"}, "elapsed": 0}
+        {"now": 1661291746863, "data": {"key": "value"}, "elapsed": 0}
+
+
+    Bump to `maxwait_ms = 2000` and clear the cache:
+
+    .. code-block:: bash
+
+        $ for i in {1..5}; do curl localhost:8080/cachetest & done
+        {"now": 1661396864744, "data": {"key": "value"}, "elapsed": 1003}
+        {"now": 1661396864744, "data": {"key": "value"}, "elapsed": 1043}
+        {"now": 1661396864744, "data": {"key": "value"}, "elapsed": 1044}
+        {"now": 1661396864744, "data": {"key": "value"}, "elapsed": 1045}
+        {"now": 1661396864744, "data": {"key": "value"}, "elapsed": 1045}
+
+    The first request is the only one doing work here;
+    the others wait up to two seconds,
+    checking in every `pulse_ms = 50` milliseconds (the default)
+    to see if a result is available.
 
     """
     antistampede = locallock(

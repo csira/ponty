@@ -260,3 +260,73 @@ Utils
 -----
 
 .. autodecorator:: ponty.retry
+
+
+
+Memoization
+***********
+
+Ponty caches are extensible, async-friendly memoizers
+that help to limit stampedes.
+They are function decorators, like
+`@functools.cache <https://docs.python.org/3/library/functools.html#functools.cache>`__
+and
+`@functools.lru_cache <https://docs.python.org/3/library/functools.html#functools.lru_cache>`__,
+and may be a good fit for cases where the builtins are insufficient
+(e.g. stampede concerns, the use-case demands a TTL,
+or perhaps data needs to be shared across a fleet of instances behind a load balancer).
+
+
+In the box
+^^^^^^^^^^
+.. autodecorator:: ponty.memo.localcache
+.. autofunction:: ponty.memo.invalidate
+
+
+Building blocks
+^^^^^^^^^^^^^^^
+
+Tools for building custom caching components.
+
+.. autodecorator:: ponty.memo.cache
+
+.. autoclass:: ponty.memo.CacheStore
+   :members:
+
+.. autoclass:: ponty.memo.cachemiss
+
+.. autoexception:: ponty.memo.Stampede
+
+
+
+Locking
+*******
+
+Ponty locks are primarily intended for stampede control in :func:`cache`,
+but may also be used independently to enforce access limits on
+e.g. shared state.
+Whenever possible, simply use
+`asyncio.Lock <https://docs.python.org/3/library/asyncio-sync.html#asyncio.Lock>`__.
+
+As a rule of thumb, wrap the minimum amount of code necessary in lock
+context blocks.
+This will reduce the frequency and duration of one coroutine blocking another.
+
+
+In the box
+^^^^^^^^^^
+.. autofunction:: ponty.memo.locallock(maxwait_ms=0, pulse_ms=100, timeout_error=Locked)
+
+
+Building blocks
+^^^^^^^^^^^^^^^
+
+Base classes for building a custom mutex.
+
+.. autoclass:: ponty.memo.SentinelStore
+   :members:
+
+.. autoclass:: ponty.memo.Lock
+   :members:
+
+.. autoexception:: ponty.memo.Locked

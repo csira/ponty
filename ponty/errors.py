@@ -14,7 +14,7 @@ class PontyError(Exception):
     `aiohttp.web.HTTPException <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.HTTPException>`__.
 
     :param text: response body, as text/plain
-    :param body: response body, as JSON
+    :param body: json-serializable response body
     :param kw: see parameter description for
       `aiohttp.web.HTTPException <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.HTTPException>`__
 
@@ -47,11 +47,6 @@ class ValidationError(PontyError):
     """Returns a 400. Inherits :class:`PontyError`."""
 
     status_code = 400
-
-
-class Locked(PontyError):
-
-    status_code = 409
 
 
 
