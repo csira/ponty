@@ -61,8 +61,7 @@ class ValidatedJsonBody(JsonBody):
             -d '{"first_name": "Donald", "last_name": "Duck"}' | python -m json.tool
         {
             "data": {
-                "first_name": "Donald",
-                "last_name": "Duck"
+                "name": "Duck, Donald",
             },
             "elapsed": 0,
             "now": 1660505985510
@@ -210,7 +209,7 @@ class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
 
 
     .. code-block:: bash
-        :caption: success, echo back the request
+        :caption: success, echo back the request body
 
         $ curl localhost:8080/person \\
             -H "content-type:application/json" \\
