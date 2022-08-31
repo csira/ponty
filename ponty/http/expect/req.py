@@ -7,14 +7,14 @@ import aiohttp.web
 
 
 class JsonBody:
-    """Descriptor. Contains the deserialized request body."""
+    """Contains the deserialized request body."""
 
     def __get__(self, obj: "Request", objtype: type["Request"]):
         return obj._json
 
 
 class TextBody:
-    """Descriptor. Contains the raw request body."""
+    """Contains the raw request body."""
 
     def __get__(self, obj: "Request", objtype: type["Request"]):
         return obj._text
@@ -94,8 +94,8 @@ def expect(cls: type[Request], *, mimetype: str = None):
       with rules for processing the HTTP request attached as descriptors
 
     :param str mimetype: expected IANA media type.
-      If provided and the specified type does not match the content-type
-      header, throws a 415
+      If provided and the specified type does not match the media type
+      found in the content-type header, throws a 415
 
     """
     def wraps(f):

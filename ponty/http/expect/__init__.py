@@ -27,7 +27,7 @@ from ponty.http.expect.route import (
 
 
 class AIOHttpReq:
-    """Descriptor. Forwards along the
+    """Forwards along the
     `aiohttp.web.Request <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Request>`__.
 
     """
@@ -36,7 +36,7 @@ class AIOHttpReq:
 
 
 class Cookie:
-    """Descriptor. Extracts request cookie `name`.
+    """Extracts request cookie `name`.
 
     :param str name: cookie name
 

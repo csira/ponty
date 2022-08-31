@@ -3,7 +3,7 @@ import aiohttp.web
 
 class Header:
     """
-    Descriptor. Extracts request header `key`.
+    Extracts request header `key`.
 
     :param str key: header name
 

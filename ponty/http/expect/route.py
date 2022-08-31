@@ -26,6 +26,14 @@ class RouteParameter(typing.Generic[T]):
 
     .. code-block:: python
 
+        from ponty import (
+            expect,
+            get,
+            Request,
+            RouteParameter,
+        )
+
+
         class FiveLetters(RouteParameter[str]):
 
             def __init__(self):

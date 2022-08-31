@@ -94,6 +94,7 @@ Request
 For example,
 
 .. code-block:: python
+   :emphasize-lines: 12,15,19
 
     from ponty import (
         expect,
@@ -117,6 +118,7 @@ For example,
 
 
 .. code-block:: bash
+   :emphasize-lines: 1,15
 
     $ curl localhost:8080/hello/you -v | python -m json.tool
     > GET /hello/you HTTP/1.1
@@ -198,8 +200,8 @@ Other
 Schema Validation
 *****************
 
-.. autoclass:: ponty.Annotation
 .. autofunction:: ponty.dataclass_to_jsonschema
+.. autoclass:: ponty.Annotation
 
 
 
@@ -274,7 +276,7 @@ and
 `@functools.lru_cache <https://docs.python.org/3/library/functools.html#functools.lru_cache>`__,
 and may be a good fit for cases where the builtins are insufficient
 (e.g. stampede concerns, the use-case demands a TTL,
-or perhaps data needs to be shared across a fleet of instances behind a load balancer).
+or perhaps the cache needs to be shared across a fleet of instances behind a load balancer).
 
 
 In the box
@@ -308,8 +310,8 @@ e.g. shared state.
 Whenever possible, simply use
 `asyncio.Lock <https://docs.python.org/3/library/asyncio-sync.html#asyncio.Lock>`__.
 
-As a rule of thumb, wrap the minimum amount of code necessary in lock
-context blocks.
+As a rule of thumb,
+wrap the minimum amount of code necessary in lock context blocks.
 This will reduce the frequency and duration of one coroutine blocking another.
 
 

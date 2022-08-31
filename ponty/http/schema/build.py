@@ -28,26 +28,29 @@ D = typing.TypeVar("D", bound=DataclassProtocol)
 
 
 def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
-    """Generate the jsonschema for a dataclass. Supports backreferences.
+    """Generate the jsonschema for a dataclass.
 
     Optionally, fields can be enriched by passing jsonschema keywords to
-    :class:`ponty.Annotation`.
+    :class:`Annotation`.
 
     Additionally, the dataclass can be enriched with keywords by embedding
-    a JsonSchema class (using :class:`ponty.Annotation` as well).
+    a JsonSchema class (using :class:`Annotation` as well).
 
-    E.g.,
+    :param dataclass cls: dataclass definition
+    :raises ValueError: raised if `cls` is not a dataclass
+    :return: the JSON schema
+
 
     .. code-block:: python
 
-        import dataclasses
+        from dataclasses import dataclass
         import json
         import typing
 
         from ponty import Annotation, dataclass_to_jsonschema
 
 
-        @dataclasses.dataclass
+        @dataclass
         class Model:
 
             name: str
@@ -57,7 +60,7 @@ def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
             cylinders: int = 4
 
 
-        @dataclasses.dataclass
+        @dataclass
         class Make:
 
             name: typing.Annotated[str, Annotation(description="Brand name")]
@@ -146,10 +149,6 @@ def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
           }
         }
 
-
-    :param dataclass cls: dataclass definition
-    :raises ValueError: raised if `cls` is not a dataclass
-    :return: the JSON schema
 
     """
     if not dataclasses.is_dataclass(cls):

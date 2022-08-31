@@ -17,7 +17,16 @@ class QueryParameter:
 
 
     .. code-block:: python
-        :emphasize-lines: 3
+        :emphasize-lines: 12
+
+        from ponty import (
+            expect,
+            get,
+            render_json,
+            QueryParameter,
+            Request,
+        )
+
 
         class HelloReq(Request):
 
@@ -94,6 +103,16 @@ class QueryParameterEnum(QueryParameter):
 
 
     .. code-block:: python
+
+        from ponty import (
+            expect,
+            get,
+            render_json,
+            QueryParameterEnum,
+            Request,
+            StringRouteParameter,
+        )
+
 
         _hellos: dict[str, str] = {
             "en": "hello",

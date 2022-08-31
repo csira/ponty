@@ -41,6 +41,15 @@ class ValidatedJsonBody(JsonBody):
 
     .. code-block:: python
 
+        from ponty import (
+            expect,
+            post,
+            render_json,
+            Request,
+            ValidatedJsonBody,
+        )
+
+
         class MyReq(Request):
 
             body = ValidatedJsonBody(filepath="validator.json")
@@ -124,7 +133,7 @@ class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
 
     :param filepath: if provided, path to the jsonschema file
       (see :class:`ValidatedJsonBody`).
-      Overrides the dataclass-built default
+      Supplants the dataclass-built default
 
 
     .. code-block:: python

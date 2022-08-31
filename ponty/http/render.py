@@ -7,16 +7,44 @@ from ponty.utils import now_millis
 
 def render_json(f):
     """
-    Package the decorated function's return via
-    `aiohttp.web.json_response <https://docs.aiohttp.org/en/stable/web_reference.html#json-response>`_,
-    with a body in the form:
+    Encode the decorated function's return value with
+    `json.dumps <https://docs.python.org/3/library/json.html#json.dumps>`__,
+    and package it into an HTTP
+    `response <https://docs.aiohttp.org/en/stable/web_reference.html#json-response>`__.
+    The JSON has the form:
 
-    .. code-block:: python
+    .. code-block:: text
 
         {
-            "now": <current epoch timestamp, in millis>,
-            "data": <function return>,
+            "data": <function return value>,
             "elapsed": <time elapsed, in millis>,
+            "now": <current epoch timestamp, in millis>,
+        }
+
+    e.g.,
+
+    .. code-block:: python
+        :emphasize-lines: 7
+
+        from ponty import get, render_json
+
+
+        @get("/hello")
+        @render_json
+        async def handler(_):
+            return {"greeting": "hello world!"}
+
+
+    .. code-block:: bash
+        :emphasize-lines: 4
+
+        $ curl localhost:8080/hello | python -m json.tool
+        {
+            "data": {
+                "greeting": "hello world!"
+            },
+            "elapsed": 1,
+            "now": 1660440618107
         }
 
     """
