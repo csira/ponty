@@ -3,8 +3,7 @@ Ponty: async HTTP server for Python
 
 
 Ponty is a simple wrapper on `aiohttp <https://github.com/aio-libs/aiohttp>`__.
-It is primarily oriented around building JSON APIs,
-but does not interfere with using advanced aiohttp features directly.
+It is primarily oriented around building JSON APIs.
 
 .. image:: https://badge.fury.io/py/ponty.svg
    :target: https://pypi.org/project/ponty

@@ -18,9 +18,7 @@ Routes
 ------
 
 Ponty relies on decorator-style routing.
-
-It automatically manages a route table under the hood,
-so it's sufficient to simply wrap your handlers like so:
+Simply wrap your handlers like so:
 
 .. code-block:: python
 
@@ -134,7 +132,7 @@ For example,
     <
     {
         "data": {
-            "greeting": "hello you!"
+            "greeting": "hello, you!"
         },
         "elapsed": 0,
         "now": 1660186724077
@@ -237,9 +235,8 @@ HTTP Errors
 Providers
 ---------
 
-Providers manage shared assets, and are Ponty's way of tapping into
-`aiohttp.web.Application.cleanup_ctx <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application.cleanup_ctx>`__
-for startup/cleanup handling.
+Providers manage shared assets, and are Ponty's way of guaranteeing
+assets are cleaned up upon program exit [#cleanup]_.
 
 Providers are asynchronous generators that take a single argument, an instance of
 `aiohttp.web.Application <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application>`_.
@@ -332,3 +329,14 @@ Base classes for building a custom mutex.
    :members:
 
 .. autoexception:: ponty.memo.Locked
+
+
+
+----------
+
+
+.. rubric:: Footnotes
+
+.. [#cleanup] Under the hood, we're using
+   `aiohttp.web.Application.cleanup_ctx <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application.cleanup_ctx>`__
+   for startup/cleanup handling.

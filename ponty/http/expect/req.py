@@ -87,7 +87,7 @@ class Request(metaclass=_Base):
 
 def expect(cls: type[Request], *, mimetype: str = None):
     """
-    Preprocess HTTP request, according to the rules configured in the
+    Preprocess the HTTP request, according to the rules configured in the
     :class:`Request` subclass.
 
     :param type[Request] cls: subclass of :class:`Request`,

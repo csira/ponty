@@ -41,7 +41,7 @@ class CacheStore(abc.ABC, typing.Generic[T]):
     :meth:`remove <ponty.memo.CacheStore.remove>`.
     All three must return awaitables.
 
-    Generic on one variable, the type <T> of the cached item.
+    Generic on one variable, the type T of the cached item.
 
     """
 
@@ -138,6 +138,7 @@ async def invalidate(cachename: str, *a, **kw) -> typing.AsyncIterator[None]:
     cache-decorated function EXACTLY in order to get a key hit. E.g.,
 
     .. code-block:: python
+        :emphasize-lines: 2,7,9
 
         @localcache(name="foo")
         async def get_foo(foo_id):

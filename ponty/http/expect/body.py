@@ -266,7 +266,7 @@ class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
 
     .. code-block:: bash
         :caption: error, wrong type for "height"
-        :emphasize-lines: 8
+        :emphasize-lines: 6,8
 
         $ curl localhost:8080/person \\
             -H "content-type:application/json" \\

@@ -41,19 +41,6 @@ class QueryParameter:
 
 
     .. code-block:: bash
-        :emphasize-lines: 4
-
-        $ curl localhost:8080/hello?punc=. | python -m json.tool
-        {
-            "data": {
-                "greeting": "hello world."
-            },
-            "elapsed": 0,
-            "now": 1660439305592
-        }
-
-
-    .. code-block:: bash
         :caption: the default in action
         :emphasize-lines: 4
 
@@ -61,6 +48,20 @@ class QueryParameter:
         {
             "data": {
                 "greeting": "hello world!"
+            },
+            "elapsed": 0,
+            "now": 1660439305592
+        }
+
+
+    .. code-block:: bash
+        :caption: overriding the default
+        :emphasize-lines: 4
+
+        $ curl localhost:8080/hello?punc=. | python -m json.tool
+        {
+            "data": {
+                "greeting": "hello world."
             },
             "elapsed": 0,
             "now": 1660439305592
@@ -103,6 +104,7 @@ class QueryParameterEnum(QueryParameter):
 
 
     .. code-block:: python
+        :emphasize-lines: 22
 
         from ponty import (
             expect,

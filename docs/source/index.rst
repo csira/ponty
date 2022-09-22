@@ -8,13 +8,35 @@ Welcome to Ponty's documentation!
 
 Asynchronous HTTP server & related utils for Python.
 
-Ponty is an opinionated wrapper on `aiohttp <https://github.com/aio-libs/aiohttp>`_.
-It is primarily oriented around building JSON APIs,
-but does not interfere with using advanced aiohttp features directly.
+Ponty is an opinionated wrapper on `aiohttp <https://github.com/aio-libs/aiohttp>`__.
+It is primarily oriented around building JSON APIs.
+
+We like static analysis, early validation, and minimal sorcery,
+so the design of the package is built with those things in mind.
+
+* early validation.
+  With inputs validated as early as possible,
+  the surface area for security issues can be reduced
+  and the odds of a partial transaction rollback can be minimized.
+  Additionally, by completing validation in a consolidated pass
+  before reaching the request handler,
+  parameter annotations can be accurate
+  and boilerplate all but disappears.
+
+* static analysis.
+  Ponty avoids runtime inspection of type annotations. [#anno]_ [#anno2]_
+
+* explicit over implicit.
+  Enumerating request-processing rules means you get what you want -
+  no more no less.
+
+Here we go.
+
 
 Current version is |release|.
 
-*Doc improvements ongoing.*
+*Doc improvements ongoing. Contributions are welcome!*
+
 
 .. _GitHub: https://github.com/csira/ponty
 
@@ -74,7 +96,7 @@ Example
     <
     {
         "data": {
-            "greeting": "hello you!"
+            "greeting": "hello you"
         },
         "elapsed": 0,
         "now": 1659448391571
@@ -110,3 +132,24 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+
+----------
+
+
+.. rubric:: Footnotes
+
+.. [#anno] Keeping with the spirit of annotations having no runtime behavior
+   (`PEP-484 <https://peps.python.org/pep-0484/#compatibility-with-other-uses-of-function-annotations>`__),
+   and in order to steer clear of the uncertain future of
+   `PEP-649 <https://peps.python.org/pep-0649/>`__,
+   Ponty assumes ``from __future__ import annotations``
+   (`PEP-563 <https://peps.python.org/pep-0563/>`__)
+   will eventually become the default.
+   Hence, perhaps at the expense of brevity, Ponty does not use type hints
+   for validation or type conversion. [#anno2]_
+
+.. [#anno2] One exception: Ponty will automatically turn a dataclass
+   into a jsonschema validator if you ask it to.
+   See :class:`ParsedJsonBody <ponty.ParsedJsonBody>`
+   (which calls :func:`dataclass_to_jsonschema <ponty.dataclass_to_jsonschema>`)
