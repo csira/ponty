@@ -8,7 +8,7 @@ Welcome to Ponty's documentation!
 
 Asynchronous HTTP server & related utils for Python.
 
-Ponty is an opinionated wrapper on `aiohttp <https://github.com/aio-libs/aiohttp>`__.
+Ponty is an opinionated wrapper on aiohttp_.
 It is primarily oriented around building JSON APIs.
 
 We like static analysis, early validation, and minimal sorcery,
@@ -39,6 +39,7 @@ Current version is |release|.
 
 
 .. _GitHub: https://github.com/csira/ponty
+.. _aiohttp: https://github.com/aio-libs/aiohttp
 
 
 Installation
@@ -123,6 +124,7 @@ Contents
    :maxdepth: 2
    :name: maintoc
 
+   quickstart
    reference
 
 
