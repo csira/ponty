@@ -1,6 +1,13 @@
-import typing
+from dataclasses import dataclass
+import sys
+from typing import Any, Protocol
 
 
-class DataclassProtocol(typing.Protocol):
+if sys.version_info >= (3, 10):
+    @dataclass
+    class DataclassProtocol(Protocol):
+        ...
 
-    __dataclass_fields__: dict[str, typing.Any]
+else:
+    class DataclassProtocol(Protocol):
+        __dataclass_fields__: dict[str, Any]
