@@ -39,5 +39,5 @@ def _echo_routes():
     print()
     print("serving:")
     for method, path in route_iter():
-        print(method, path)
+        print(method, "\t", path)
     print()
