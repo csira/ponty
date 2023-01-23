@@ -11,9 +11,9 @@ if __name__ == "__main__":
         url="https://github.com/csira/ponty",
         description="Minimal async web framework, built on aiohttp.",
         install_requires=[
-            "aiohttp==3.7.3",
+            "aiohttp>=3.7.3",
             "jsonschema==3.2.0",
-            "typing-extensions==4.2.0",
+            "typing-extensions>=4.2.0",
         ],
         python_requires=">=3.8",
         classifiers=[
