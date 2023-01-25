@@ -6,6 +6,8 @@ from dataclasses import MISSING
 import datetime
 import enum
 import numbers
+import sys
+import types
 import typing
 
 from ponty.types_ import DataclassProtocol
@@ -233,8 +235,10 @@ def _lookup(field_type, primary, defs, **kw):
     if unscripted_type is typing.Literal:
         return {"enum": list(args), **kw}
 
-    if unscripted_type is typing.Union:  # also catches Optional
-        # TODO list would be nicer? this is prob more reliable
+    is_uniontype: bool = unscripted_type is typing.Union
+    if sys.version_info >= (3, 10):
+        is_uniontype = is_uniontype or (unscripted_type is types.UnionType)
+    if is_uniontype:  # also catches Optional
         return {
             "anyOf": [_lookup(arg, primary, defs) for arg in args],
             **kw
