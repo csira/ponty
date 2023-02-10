@@ -1,5 +1,6 @@
 import aiohttp.web
 
+from ponty.errors import raise_status
 from ponty.http.expect.body import (
     ValidatedJsonBody,
     ParsedJsonBody,
@@ -43,16 +44,27 @@ class Cookie:
     :param str default:
       default value, if the cookie is not present
 
+    :param int errorcode:
+      HTTP status code raised, if the cookie is required and not supplied
+
     """
-    def __init__(self, *, name: str, required: bool = False, default: str = ""):
+    def __init__(
+        self,
+        *,
+        name: str,
+        required: bool = False,
+        default: str = "",
+        errorcode: int = 400,
+    ):
         self._name = name
         self._required = required
         self._default = default
+        self._errorcode = errorcode
 
     def __get__(self, obj: Request, objtype: type[Request] = None) -> str:
         try:
             return obj.req.cookies[self._name]
         except KeyError:
             if self._required:
-                raise aiohttp.web.HTTPBadRequest
+                raise_status(self._errorcode)
             return self._default
