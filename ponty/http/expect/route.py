@@ -25,7 +25,7 @@ class RouteParameter(typing.Generic[T]):
     New reusable "matchers" can be created like so:
 
     .. code-block:: python
-       :emphasize-lines: 9,17,22
+       :emphasize-lines: 9,17,20,22
 
         from ponty import (
             expect,

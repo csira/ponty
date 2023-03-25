@@ -30,12 +30,12 @@ Simply wrap your handlers like so:
     async def handler(_):
         return {"greeting": "hello world"}
 
-Ponty makes no effort to intercept the 
+Ponty makes no effort to intercept the
 `aiohttp.web.Request <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Request>`__
 instance provided by `aiohttp`.
 It does, however, provide a :class:`Request <ponty.Request>` class of its own to simplify processing.
 
-Ponty handlers may return 
+Ponty handlers may return
 `aiohttp.web.Response <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Response>`__
 instances directly, or they may take advantage of utilities such as
 :func:`ponty.render_json` or :func:`ponty.raise_status`.
@@ -150,7 +150,7 @@ fields on that request.
 
 Ponty uses Python *descriptors* for extracting and processing
 components of the HTTP request.
-In conjunction with the :func:`ponty.expect` decorator, 
+In conjunction with the :func:`ponty.expect` decorator,
 request fields are parameterized directly into the decorated handler.
 (Descriptor names are reused as parameter names.)
 
@@ -169,7 +169,8 @@ Route Parameters
 Query Parameters
 ^^^^^^^^^^^^^^^^
 .. autoclass:: ponty.QueryParameter
-.. autoclass:: ponty.QueryParameterEnum
+.. autoclass:: ponty.StringQueryParameter
+.. autoclass:: ponty.PosIntQueryParameter
 
 
 Request Body
@@ -240,7 +241,7 @@ assets are cleaned up upon program exit [#cleanup]_.
 
 Providers are asynchronous generators that take a single argument, an instance of
 `aiohttp.web.Application <https://docs.aiohttp.org/en/stable/web_reference.html#aiohttp.web.Application>`_.
-Code before the `yield` initializes the asset during startup, 
+Code before the `yield` initializes the asset during startup,
 while code after the `yield` runs during teardown.
 
 Providers must be passed to :py:func:`ponty.startmeup` for proper handling.

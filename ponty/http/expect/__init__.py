@@ -10,7 +10,11 @@ from ponty.http.expect.header import (
     ContentLength,
     ContentType,
 )
-from ponty.http.expect.query import QueryParameter, QueryParameterEnum
+from ponty.http.expect.query import (
+    PosIntQueryParameter,
+    QueryParameter,
+    StringQueryParameter,
+)
 from ponty.http.expect.req import (
     expect,
     Request,
