@@ -1,9 +1,9 @@
 import json
 import typing
 
-import aiohttp.web
 import jsonschema  # type: ignore
 
+from ponty.errors import raise_status
 from ponty.http.schema import (
     dataclass_to_jsonschema,
     validator_for_schema,
@@ -114,7 +114,7 @@ class ValidatedJsonBody(JsonBody):
         try:
             self._validator.validate(body)
         except jsonschema.ValidationError as e:
-            raise aiohttp.web.HTTPBadRequest(text=e.message)
+            raise_status(400, text=e.message)
 
         return body
 

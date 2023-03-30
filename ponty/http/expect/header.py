@@ -1,4 +1,4 @@
-import aiohttp.web
+from ponty.errors import raise_status
 
 
 class Header:
@@ -24,7 +24,7 @@ class Header:
             return obj.req.headers[self._key]
         except KeyError:
             if self._required:
-                raise aiohttp.web.HTTPBadRequest
+                raise_status(400)
             return self._default
 
 

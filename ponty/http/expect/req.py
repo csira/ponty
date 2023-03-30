@@ -5,6 +5,8 @@ import warnings
 
 import aiohttp.web
 
+from ponty.errors import raise_status
+
 
 class JsonBody:
     """Contains the deserialized request body."""
@@ -114,7 +116,7 @@ def expect(cls: type[Request], *, mimetype: str = None):
         async def wrapper(req: aiohttp.web.Request):
             if mimetype:
                 if mimetype not in req.headers["content-type"]:
-                    raise aiohttp.web.HTTPUnsupportedMediaType
+                    raise_status(415)
 
             inst = cls(req)
             await inst._prepare()
