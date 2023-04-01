@@ -3,10 +3,10 @@ import typing
 from ponty.http.expect.req import Request
 
 
-T = typing.TypeVar("T")
+_T = typing.TypeVar("_T")
 
 
-class RouteParameter(typing.Generic[T]):
+class RouteParameter(typing.Generic[_T]):
     """
     The *RouteParameter* descriptor is used to identify and extract
     variable resources from the URI. It is generic on one variable.
@@ -19,7 +19,7 @@ class RouteParameter(typing.Generic[T]):
     Particularly useful in an f-string (example below).
 
     :param str pattern: custom regular expression to match the variable part
-    :param cast_to: converts the variable part to type `T`
+    :param cast_func: converts the variable part to type `T`
 
 
     New reusable "matchers" can be created like so:
@@ -56,10 +56,10 @@ class RouteParameter(typing.Generic[T]):
         self,
         *,
         pattern: str,
-        cast_to: typing.Callable[[str], T] = None,
+        cast_func: typing.Callable[[str], _T] = None,
     ):
         self._pattern = pattern
-        self._cast_func = cast_to
+        self._cast_func = cast_func
 
     def __set_name__(self, owner: type[Request], name: str):
         self._key = name
@@ -68,13 +68,13 @@ class RouteParameter(typing.Generic[T]):
     def __get__(self, obj: None, objtype: type[Request]) -> str: ...
 
     @typing.overload
-    def __get__(self, obj: Request, objtype: type[Request]) -> T: ...
+    def __get__(self, obj: Request, objtype: type[Request]) -> _T: ...
 
     def __get__(
         self,
         obj: typing.Optional[Request],
         objtype: type[Request] = None,
-    ) -> typing.Union[T, str]:
+    ) -> typing.Union[_T, str]:
 
         if obj is None:
             return f"{{{self._key}:{self._pattern}}}"
@@ -92,7 +92,7 @@ class PosIntRouteParameter(RouteParameter[int]):
 
     """
     def __init__(self):
-        super().__init__(pattern="\d+", cast_to=int)
+        super().__init__(pattern="\d+", cast_func=int)
 
 
 class StringRouteParameter(RouteParameter[str]):
