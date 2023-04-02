@@ -24,12 +24,12 @@ class TextBody:
 
 
 
-T = typing.TypeVar("T", covariant=True)
+_T = typing.TypeVar("_T", covariant=True)
 
 
 @typing.runtime_checkable
-class _Descriptor(typing.Protocol[T]):
-    def __get__(self, obj, objtype=None) -> T: ...
+class _Descriptor(typing.Protocol[_T]):
+    def __get__(self, obj, objtype=None) -> _T: ...
 
 
 
