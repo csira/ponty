@@ -160,7 +160,7 @@ class QueryParameter(typing.Generic[_T]):
         self,
         *,
         key: str = "",
-        required: Literal[True] = True,
+        required: Literal[True],
         cast_func: Callable[[str], _T],
         values: Iterable[str] = (),
     ): ...
@@ -174,6 +174,9 @@ class QueryParameter(typing.Generic[_T]):
         cast_func: Callable[[str], _T],
         values: Iterable[str] = (),
     ):
+
+        if not required and default is _MISSING:
+            raise ValueError("a default must be provided if required=False")
 
         self._key = key
         self._required = required
