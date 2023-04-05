@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'Ponty'
-copyright = '2022, ponty'
+copyright = '2023, ponty'
 author = 'ponty'
-release = '0.3.2'
+release = '0.3.7'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
