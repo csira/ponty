@@ -24,7 +24,7 @@ class PontyError(Exception):
     def __init__(
         self,
         *,
-        text: str = None,
+        text: typing.Union[str, None] = None,
         body: typing.Any = None,
         **kw
     ):
@@ -51,13 +51,13 @@ class ValidationError(PontyError):
 
 
 
-P = ParamSpec("P")
-R = TypeVar("R")
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
 
 
-def error_trap(f: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
+def error_trap(f: Callable[_P, Awaitable[_R]]) -> Callable[_P, Awaitable[_R]]:
     @functools.wraps(f)
-    async def wrapper(*a: P.args, **kw: P.kwargs) -> R:
+    async def wrapper(*a: _P.args, **kw: _P.kwargs) -> _R:
         try:
             return await f(*a, **kw)
         except PontyError as e:
@@ -70,12 +70,14 @@ def error_trap(f: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
     return wrapper
 
 
+
+
 def raise_status(
     status: int,
     *,
-    text: str = None,
+    text: typing.Union[str, None] = None,
     body: typing.Any = None,
-    content_type: str = None,
+    content_type: typing.Union[str, None] = None,
     **kw
 ) -> typing.NoReturn:
     """

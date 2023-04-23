@@ -7,10 +7,10 @@ from ponty.memo.lock.local import locallock
 from ponty.utils import now_millis
 
 
-T = typing.TypeVar("T")
+_T = typing.TypeVar("_T")
 
 
-class _LRUStore(CacheStore[T]):
+class _LRUStore(CacheStore[_T]):
 
     def __init__(self, ttl_ms: int, maxsize: int):
         super().__init__()
@@ -25,10 +25,10 @@ class _LRUStore(CacheStore[T]):
             warnings.warn("Cache without maxsize may grow endlessly, beware.")
         self._maxsize: typing.Final[int] = maxsize
 
-        self._cache: dict[str, tuple[typing.Union[int, None], T]] = dict()
+        self._cache: dict[str, tuple[typing.Union[int, None], _T]] = dict()
         self._lru: deque[str] = deque()
 
-    async def get(self, key: str) -> typing.Union[T, type[cachemiss]]:
+    async def get(self, key: str) -> typing.Union[_T, type[cachemiss]]:
         try:
             expiry, data = self._cache[key]
         except KeyError:
@@ -44,7 +44,7 @@ class _LRUStore(CacheStore[T]):
 
         return data
 
-    async def set(self, key: str, data: T) -> None:
+    async def set(self, key: str, data: _T) -> None:
         if self._ttl_ms == 0:
             expiry = None
         else:

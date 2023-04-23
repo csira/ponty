@@ -3,7 +3,7 @@ from ponty.memo.lock.base import SentinelStore, Lock
 
 class _Sentinels(SentinelStore):
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         self._sentinels: set[str] = set()
 

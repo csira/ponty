@@ -235,7 +235,7 @@ def _lookup(field_type, primary, defs, **kw):
     if unscripted_type is typing.Literal:
         return {"enum": list(args), **kw}
 
-    is_uniontype: bool = unscripted_type is typing.Union
+    is_uniontype = unscripted_type is typing.Union
     if sys.version_info >= (3, 10):
         is_uniontype = is_uniontype or (unscripted_type is types.UnionType)
     if is_uniontype:  # also catches Optional

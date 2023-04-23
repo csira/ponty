@@ -28,10 +28,10 @@ class cachemiss:
 
 
 
-T = typing.TypeVar("T")
+_T = typing.TypeVar("_T")
 
 
-class CacheStore(abc.ABC, typing.Generic[T]):
+class CacheStore(abc.ABC, typing.Generic[_T]):
     """Abstract Base Class. Container for cached items.
 
     :func:`cache` expects two abstract methods,
@@ -46,7 +46,7 @@ class CacheStore(abc.ABC, typing.Generic[T]):
     """
 
     @abc.abstractmethod
-    async def get(self, key: str) -> typing.Union[T, type[cachemiss]]:
+    async def get(self, key: str) -> typing.Union[_T, type[cachemiss]]:
         """Fetch the cached value.
 
         Errors are not captured.
@@ -59,7 +59,7 @@ class CacheStore(abc.ABC, typing.Generic[T]):
         """
 
     @abc.abstractmethod
-    async def set(self, key: str, data: T) -> None:
+    async def set(self, key: str, data: _T) -> None:
         """Add an item to the cache.
 
         :param key: unique id for the item

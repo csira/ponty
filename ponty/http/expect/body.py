@@ -92,11 +92,18 @@ class ValidatedJsonBody(JsonBody):
         'last_name' is a required property
 
     """
+
+    @typing.overload
+    def __init__(self, *, filepath: str, schema: None = None): ...
+
+    @typing.overload
+    def __init__(self, *, filepath: None = None, schema: dict[str, typing.Any]): ...
+
     def __init__(
         self,
         *,
-        filepath: str = None,
-        schema: dict[str, typing.Any] = None,
+        filepath: typing.Union[str, None] = None,
+        schema: typing.Union[ dict[str, typing.Any], None ] = None,
     ):
         super().__init__()
 
@@ -278,7 +285,7 @@ class ParsedJsonBody(ValidatedJsonBody, typing.Generic[D]):
         'abc' is not of type 'integer'
 
     """
-    def __init__(self, cls: type[D], *, filepath: str = None):
+    def __init__(self, cls: type[D], *, filepath: typing.Union[str, None] = None):
         self._cls = cls
 
         if filepath:

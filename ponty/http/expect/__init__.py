@@ -33,7 +33,7 @@ class AIOHttpReq:
     `aiohttp.web.Request <https://docs.aiohttp.org/en/latest/web_reference.html#aiohttp.web.Request>`__.
 
     """
-    def __get__(self, obj: Request, objtype: type[Request] = None) -> aiohttp.web.Request:
+    def __get__(self, obj: Request, objtype: type[Request]) -> aiohttp.web.Request:
         return obj.req
 
 
@@ -65,7 +65,7 @@ class Cookie:
         self._default = default
         self._errorcode = errorcode
 
-    def __get__(self, obj: Request, objtype: type[Request] = None) -> str:
+    def __get__(self, obj: Request, objtype: type[Request]) -> str:
         try:
             return obj.req.cookies[self._name]
         except KeyError:

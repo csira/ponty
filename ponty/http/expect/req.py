@@ -1,6 +1,8 @@
 import functools
 import inspect
 import typing
+from typing import Awaitable, Callable, TypeVar
+from typing_extensions import ParamSpec
 import warnings
 
 import aiohttp.web
@@ -24,7 +26,7 @@ class TextBody:
 
 
 
-_T = typing.TypeVar("_T", covariant=True)
+_T = TypeVar("_T", covariant=True)
 
 
 @typing.runtime_checkable
@@ -71,7 +73,7 @@ class Request(metaclass=_Base):
     def __init__(self, req: aiohttp.web.Request):
         self.req = req
         self._json = None
-        self._text: typing.Optional[str] = None
+        self._text: typing.Union[str, None] = None
 
     @property
     def _fields(self) -> dict[str, typing.Any]:
@@ -87,7 +89,11 @@ class Request(metaclass=_Base):
 
 
 
-def expect(cls: type[Request], *, mimetype: str = None):
+_P = ParamSpec("_P")
+_R = TypeVar("_R")
+
+
+def expect(cls: type[Request], *, mimetype: typing.Union[str, None] = None):
     """
     Preprocess the HTTP request, according to the rules configured in the
     :class:`Request` subclass.
@@ -100,7 +106,10 @@ def expect(cls: type[Request], *, mimetype: str = None):
       found in the content-type header, throws a 415
 
     """
-    def wraps(f):
+    def wraps(
+        f: Callable[_P, Awaitable[_R]]
+    ) -> Callable[[aiohttp.web.Request], Awaitable[_R]]:
+
         sig = inspect.signature(f)
         argnames = sig.parameters.keys()
 
@@ -110,10 +119,10 @@ def expect(cls: type[Request], *, mimetype: str = None):
 
         if cls._extract_json:
             if mimetype is not None and mimetype != "application/json":
-                warnings.warn(f"handler '{f.__name__}' expects a json payload but mimetype '{mimetype}' is expected")
+                warnings.warn(f"handler '{f.__name__}' expects a json payload but mimetype '{mimetype}' has been specified")
 
         @functools.wraps(f)
-        async def wrapper(req: aiohttp.web.Request):
+        async def wrapper(req: aiohttp.web.Request) -> _R:
             if mimetype:
                 if mimetype not in req.headers["content-type"]:
                     raise_status(415)

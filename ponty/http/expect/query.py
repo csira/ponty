@@ -28,7 +28,7 @@ class QueryParameter(typing.Generic[_T]):
       Default `False`
 
     :param _T default:
-      default value, returned if the query param is not provided.
+      default value, returned if the query param has not been provided.
       Set `required=True` instead if this should be treated as an error condition.
       One of `required` or `default` must be provided
 
@@ -44,6 +44,7 @@ class QueryParameter(typing.Generic[_T]):
 
     It's easiest to use :class:`StringQueryParameter` or
     :class:`PosIntQueryParameter` for simple cases in practice.
+
     Use the :class:`QueryParameter` base class to create new custom parsers,
     in the same way as :class:`RouteParameter`:
 
@@ -184,7 +185,7 @@ class QueryParameter(typing.Generic[_T]):
         self._cast_func = cast_func
         self._values = values
 
-    def __set_name__(self, obj: Request, name: str) -> None:
+    def __set_name__(self, obj: type[Request], name: str) -> None:
         if not self._key:
             self._key = name
 
@@ -209,10 +210,8 @@ class QueryParameter(typing.Generic[_T]):
         try:
             return self._cast_func(val)
         except ValueError:
-            msg = f"{val} could not be cast"
+            msg = f"'{val}' could not be cast"
             raise ValidationError(text=msg)
-
-        return val
 
 
 class StringQueryParameter(QueryParameter[str]):
@@ -333,6 +332,61 @@ class PosIntQueryParameter(QueryParameter[int]):
     """
     Inherits :class:`QueryParameter`.
     Casts the captured query param to an integer, and validates it is non-negative.
+
+    .. code-block:: python
+        :emphasize-lines: 12
+
+        from ponty import (
+            expect,
+            get,
+            render_json,
+            Request,
+            PosIntQueryParameter,
+        )
+
+
+        class HelloReq(Request):
+
+            num_exclamations = PosIntQueryParameter(key="bangs", default=1)
+
+
+        @get("/hello")
+        @expect(HelloReq)
+        @render_json
+        async def greet(num_exclamations: int):
+            return {"greeting": f"hello world{'!' * num_exclamations}"}
+
+
+    .. code-block:: bash
+        :emphasize-lines: 4
+
+        $ curl localhost:8080/hello?bangs=7 | python -m json.tool
+        {
+            "data": {
+                "greeting": "hello world!!!!!!!"
+            },
+            "elapsed": 0
+            "now": 1681345852404,
+        }
+
+
+    .. code-block:: bash
+        :caption: not an int
+        :emphasize-lines: 2,7,13
+
+        $ curl localhost:8080/hello?bangs=abc
+        > GET /hello?bangs=abc HTTP/1.1
+        > Host: localhost:8008
+        > User-Agent: curl/7.79.1
+        > Accept: */*
+        >
+        < HTTP/1.1 400 Bad Request
+        < Content-Type: text/plain; charset=utf-8
+        < Content-Length: 21
+        < Date: Thu, 13 Apr 2023 00:31:40 GMT
+        < Server: Python/3.9 aiohttp/3.7.3
+        <
+        'abc' could not be cast
 
     """
     def __init__(self, **kw):

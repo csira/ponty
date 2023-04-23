@@ -56,7 +56,7 @@ class RouteParameter(typing.Generic[_T]):
         self,
         *,
         pattern: str,
-        cast_func: typing.Callable[[str], _T] = None,
+        cast_func: typing.Union[ typing.Callable[[str], _T], None ] = None,
     ):
         self._pattern = pattern
         self._cast_func = cast_func
@@ -72,8 +72,8 @@ class RouteParameter(typing.Generic[_T]):
 
     def __get__(
         self,
-        obj: typing.Optional[Request],
-        objtype: type[Request] = None,
+        obj: typing.Union[Request, None],
+        objtype: type[Request],
     ) -> typing.Union[_T, str]:
 
         if obj is None:

@@ -17,8 +17,8 @@ def http_client_provider(
     name: str = _defaultname,
     timeout: int = 5,
     concurrency: int = 100,
-    headers: dict[str, typing.Any] = None,
-    cookies: dict[str, typing.Any] = None,
+    headers: typing.Union[ dict[str, typing.Any], None ] = None,
+    cookies: typing.Union[ dict[str, typing.Any], None ] = None,
     **kw
 ) -> Provider:
     """Builds an HTTP Client Session provider.

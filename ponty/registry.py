@@ -6,7 +6,7 @@ T = typing.TypeVar("T")
 
 class Registry(typing.Generic[T]):
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._registry: dict[str, T] = {}
 
     def __contains__(self, name: str) -> bool:
