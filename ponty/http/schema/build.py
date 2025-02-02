@@ -1,10 +1,12 @@
 __all__ = ["dataclass_to_jsonschema", "Annotation"]
 
 
+from contextlib import suppress
 import dataclasses
 from dataclasses import MISSING
 import datetime
 import enum
+import inspect
 import numbers
 import sys
 import types
@@ -157,7 +159,7 @@ def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
         raise ValueError("Dataclasses only.")
 
     defs: dict[str, typing.Any] = {}
-    schema = _cache_dataclass(cls, cls, defs, True)
+    schema = _cache_ref(cls, cls, defs, _render_dataclass, firstpass=True)
 
     if defs:
         schema["$defs"] = defs
@@ -170,15 +172,25 @@ def dataclass_to_jsonschema(cls: type[D]) -> dict[str, typing.Any]:
 
 
 
-def _cache_dataclass(cls, primary, defs, firstpass=False):
+def _cache_ref(
+    cls,
+    primary,
+    defs,
+    render_func,
+    firstpass=False,
+):
+
     if cls is primary:
         if firstpass:
-            return _render_dataclass(cls, primary, defs)
+            return render_func(cls, primary, defs)
         return {"allOf": [{"$ref": "#"}]}
 
     name = cls.__name__
     if name not in defs:
-        defs[name] = _render_dataclass(cls, primary, defs)
+        schema = render_func(cls, primary, defs)
+        if not schema:
+            return None
+        defs[name] = schema
 
     return {"allOf": [{"$ref": f"#/$defs/{name}"}]}
 
@@ -197,11 +209,31 @@ def _render_dataclass(cls, primary, defs):
         if field.default is MISSING and field.default_factory is MISSING:
             required.append(field.name)
 
+    return _render(cls, properties, required)
+
+
+def _render_obj_anno(cls, primary, defs):
+    try:
+        anno = inspect.get_annotations(cls)
+    except TypeError:
+        return None
+
+    if not anno:
+        return None
+
+    properties = {}
+    for fieldname, valtype in anno.items():
+        properties[fieldname] = _lookup(valtype, False, defs)
+
+    return _render(cls, properties, list(properties.keys()))
+
+
+def _render(cls, properties, required):
     schema = {
         "properties": properties,
         "title": cls.__name__,
         "type": "object",
-        **getattr(getattr(cls, "JsonSchema", {}), "annotation", {})
+        **getattr(getattr(cls, "JsonSchema", {}), "annotation", {}),
     }
 
     if required:
@@ -210,9 +242,11 @@ def _render_dataclass(cls, primary, defs):
     return schema
 
 
+
+
 def _lookup(field_type, primary, defs, **kw):
     if dataclasses.is_dataclass(field_type):
-        return _cache_dataclass(field_type, primary, defs)
+        return _cache_ref(field_type, primary, defs, _render_dataclass)
 
     if field_type is typing.Any:
         return {}
@@ -301,29 +335,45 @@ def _lookup(field_type, primary, defs, **kw):
             }
         return {"allOf": [{"$ref": f"#/$defs/{name}"}]}
 
+    if (schema := _cache_ref(field_type, primary, defs, _render_obj_anno)):
+        return schema
+
     raise Exception(f"no support for {field_type}/{unscripted_type}")
 
 
 if __name__ == "__main__":
     import json
 
+
     @dataclasses.dataclass
     class Bar:
+
         x: int
         y: int
 
+
+    class Zap(typing.TypedDict):
+
+        a: str
+        b: int
+        c: Bar
+
+
     @dataclasses.dataclass
     class Foo:
+
         name: typing.Annotated[str, Annotation(minLength=22, pattern=".*")]
         age: int
         blah: list[int]
         blargh: dict[str, Bar]
         blam: tuple[Bar, ...]
+        zoop: Zap
         favorite_color: typing.Optional[str]
         union_test: typing.Union[str, int] = 7
 
         class JsonSchema:
             annotation = Annotation(description="go you!")
+
 
     schema = dataclass_to_jsonschema(Foo)
     print(json.dumps(schema, indent=2))
