@@ -1,13 +1,7 @@
-from dataclasses import dataclass
-import sys
-from typing import Any, Protocol
+from dataclasses import Field
+from typing import Any, ClassVar, Protocol
 
 
-if sys.version_info >= (3, 10):
-    @dataclass
-    class DataclassProtocol(Protocol):
-        ...
+class DataclassProtocol(Protocol):
 
-else:
-    class DataclassProtocol(Protocol):
-        __dataclass_fields__: dict[str, Any]
+    __dataclass_fields__: ClassVar[dict[str, Field[Any]]]
